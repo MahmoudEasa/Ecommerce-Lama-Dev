@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styled from "styled-components";
+import { sliderItems } from "../data";
 
 import {
   KeyboardArrowLeftOutlined,
@@ -36,7 +37,10 @@ const Arrow = styled.div`
 const Wrapper = styled.div`
   height: 100%;
   display: flex;
-  transform: translateX(0vw);
+  position: absolute;
+  left: 0;
+  transition: all 1.5s ease;
+  transform: translateX(${(props) => props.slideIndex * -100}vw);
 `;
 
 const Slide = styled.div`
@@ -85,19 +89,10 @@ const Slider = () => {
 
   const handleClick = (dir) => {
     if (dir === "left") {
-      if (slideIndex === 0) {
-        setSlideIndex(-200);
-      } else {
-        setSlideIndex(slideIndex + 100);
-      }
+      setSlideIndex(slideIndex > 0 ? slideIndex - 1 : sliderItems.length - 1);
     } else {
-      if (slideIndex === -200) {
-        setSlideIndex(0);
-      } else {
-        setSlideIndex(slideIndex - 100);
-      }
+      setSlideIndex(slideIndex < sliderItems.length - 1 ? slideIndex + 1 : 0);
     }
-    console.log(slideIndex);
   };
 
   return (
@@ -105,43 +100,19 @@ const Slider = () => {
       <Arrow direction="left" onClick={() => handleClick("left")}>
         <KeyboardArrowLeftOutlined />
       </Arrow>
-      <Wrapper>
-        <Slide bg="#f5fafd">
-          <ImgContainer>
-            <Image src="https://i.ibb.co/DG69bQ4/2.png" />
-          </ImgContainer>
-          <InfoContainer>
-            <Title>SUMMER SALE</Title>
-            <Desc>
-              DON'T COMPROMISE ON STYLE! GET FLAT 30% OFF FOR NEW ARRIVALS.
-            </Desc>
-            <Button>SHOW NOW</Button>
-          </InfoContainer>
-        </Slide>
-        <Slide bg="#fcf1ed">
-          <ImgContainer>
-            <Image src="https://i.ibb.co/DG69bQ4/2.png" />
-          </ImgContainer>
-          <InfoContainer>
-            <Title>AUTUMN COLLECTION</Title>
-            <Desc>
-              DON'T COMPROMISE ON STYLE! GET FLAT 30% OFF FOR NEW ARRIVALS.
-            </Desc>
-            <Button>SHOW NOW</Button>
-          </InfoContainer>
-        </Slide>
-        <Slide bg="#fbf0f4">
-          <ImgContainer>
-            <Image src="https://i.ibb.co/DG69bQ4/2.png" />
-          </ImgContainer>
-          <InfoContainer>
-            <Title>LOUNGEWEAR LOVE</Title>
-            <Desc>
-              DON'T COMPROMISE ON STYLE! GET FLAT 30% OFF FOR NEW ARRIVALS.
-            </Desc>
-            <Button>SHOW NOW</Button>
-          </InfoContainer>
-        </Slide>
+      <Wrapper slideIndex={slideIndex}>
+        {sliderItems.map((item) => (
+          <Slide key={item.id} bg={`#${item.bg}`}>
+            <ImgContainer>
+              <Image src={item.img} />
+            </ImgContainer>
+            <InfoContainer>
+              <Title>{item.title}</Title>
+              <Desc>{item.desc}</Desc>
+              <Button>SHOW NOW</Button>
+            </InfoContainer>
+          </Slide>
+        ))}
       </Wrapper>
       <Arrow direction="right" onClick={() => handleClick("right")}>
         <KeyboardArrowRight />
