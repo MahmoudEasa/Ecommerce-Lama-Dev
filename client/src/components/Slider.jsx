@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
 import { sliderItems } from "../data";
+import { mobile } from "../responsive";
 
 import {
   KeyboardArrowLeftOutlined,
@@ -15,6 +16,7 @@ const Container = styled.div`
   align-items: center;
   position: relative;
   overflow: hidden;
+  ${mobile({ display: "none" })}
 `;
 
 const Arrow = styled.div`
