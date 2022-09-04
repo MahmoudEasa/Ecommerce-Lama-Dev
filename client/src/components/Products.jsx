@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import styled from "styled-components";
 import Product from "./Product";
-import { popularProducts } from "../data";
 
 const Container = styled.div`
   display: flex;
@@ -13,7 +12,7 @@ const Container = styled.div`
 
 const Products = ({ cat, filters, sort }) => {
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setfilteredProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
     axios
@@ -28,7 +27,7 @@ const Products = ({ cat, filters, sort }) => {
 
   useEffect(() => {
     cat &&
-      setfilteredProducts(
+      setFilteredProducts(
         products.filter((item) =>
           Object.entries(filters).every(([key, value]) =>
             item[key].includes(value)
@@ -37,11 +36,29 @@ const Products = ({ cat, filters, sort }) => {
       );
   }, [cat, filters, products]);
 
+  useEffect(() => {
+    if (sort === "newest") {
+      setFilteredProducts((prev) =>
+        [...prev].sort((a, b) => a.createdAt - b.createdAt)
+      );
+    } else if (sort === "asc") {
+      setFilteredProducts((prev) =>
+        [...prev].sort((a, b) => a.price - b.price)
+      );
+    } else {
+      setFilteredProducts((prev) =>
+        [...prev].sort((a, b) => b.price - a.price)
+      );
+    }
+  }, [sort]);
+
   return (
     <Container>
       {cat
-        ? filteredProducts.map((item) => <Product key={item.id} item={item} />)
-        : products.map((item) => <Product key={item.id} item={item} />)}
+        ? filteredProducts.map((item) => <Product key={item._id} item={item} />)
+        : products
+            .slice(0, 8)
+            .map((item) => <Product key={item._id} item={item} />)}
     </Container>
   );
 };
