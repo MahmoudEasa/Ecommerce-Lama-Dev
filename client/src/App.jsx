@@ -8,11 +8,13 @@ import Register from "./pages/Register";
 import Login from "./pages/Login";
 import Cart from "./pages/Cart";
 import Success from "./pages/Success";
+import NotFound from "./pages/NotFound";
 
 const App = () => {
   const user = useSelector((state) => state.user.currentUser);
   return (
     <Routes>
+      <Route path="*" element={<NotFound />} />
       <Route path="/" element={<Home />} />
       <Route path="/products" element={<ProductList />}>
         <Route path=":category" element={<ProductList />} />

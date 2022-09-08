@@ -1,0 +1,29 @@
+.loginContainer {
+  width: 100vw;
+  height: calc(100vh - 50px);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  align-items: center;
+  justify-content: center;
+}
+
+.loginContainer input {
+  width: 25%;
+  height: 40px;
+  padding: 10px;
+}
+
+.loginContainer button {
+  padding: 10px 40px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background-color: rgb(197, 197, 197);
+  font-weight: bold;
+}
+
+.loginContainer button:disabled,
+.loginContainer input:disabled {
+  cursor: wait;
+}

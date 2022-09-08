@@ -12,10 +12,21 @@ import {
   ChatBubbleOutline,
   WorkOutline,
   Report,
+  ExitToApp,
 } from "@material-ui/icons";
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
+import { logoutUser } from "./../../redux/apiCalls";
 
 const Sidebar = () => {
+  const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    logoutUser(dispatch);
+    window.location.reload();
+  };
+
   return (
     <div className="sidebar">
       <div className="sidebarWrapper">
@@ -94,6 +105,10 @@ const Sidebar = () => {
             <li className="sidebarListItem">
               <Report className="sidebarIcon" />
               Reports
+            </li>
+            <li onClick={handleLogout} className="sidebarListItem">
+              <ExitToApp className="sidebarIcon" />
+              Logout
             </li>
           </ul>
         </div>
