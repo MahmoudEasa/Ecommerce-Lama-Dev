@@ -17,6 +17,7 @@ import {
   removeImg,
 } from "./productRedux";
 
+// LOGIN
 export const login = async (dispatch, user) => {
   dispatch(loginStart());
   try {
@@ -27,6 +28,7 @@ export const login = async (dispatch, user) => {
   }
 };
 
+// LOGOUT
 export const logoutUser = (dispatch) => {
   dispatch(logout());
 };

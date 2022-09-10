@@ -5,19 +5,33 @@ const productSlice = createSlice({
   initialState: {
     products: [],
     img: "",
+    isImgLoading: false,
+    isImgError: false,
     isFetching: false,
     error: false,
   },
   reducers: {
     // UPDATE IMG
+    updateImgStart: (state) => {
+      state.isImgLoading = true;
+      state.isImgError = false;
+    },
     updateImg: (state, action) => {
       state.img = action.payload;
+    },
+    updateImgSuccess: (state) => {
+      state.isImgLoading = false;
+    },
+    updateImgFailure: (state) => {
+      state.isImgLoading = false;
+      state.isImgError = true;
     },
 
     // REMOVE IMG
     removeImg: (state) => {
       state.img = "";
     },
+
     // GET ALL
     getProductStart: (state) => {
       state.isFetching = true;
@@ -95,6 +109,9 @@ export const {
   addProductSuccess,
   addProductFailure,
   updateImg,
+  updateImgStart,
+  updateImgFailure,
+  updateImgSuccess,
   removeImg,
 } = productSlice.actions;
 export default productSlice.reducer;

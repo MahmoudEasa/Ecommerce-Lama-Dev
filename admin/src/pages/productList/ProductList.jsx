@@ -1,21 +1,46 @@
 import "./productList.css";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { DataGrid } from "@material-ui/data-grid";
 import { DeleteOutline } from "@material-ui/icons";
 import { getProducts, deleteProduct } from "../../redux/apiCalls";
+import { ToastContainer, toast } from "react-toastify";
 
 const ProductList = () => {
   const dispatch = useDispatch();
-  const products = useSelector((state) => state.product.products);
+  const { products, isFetching, error } = useSelector((state) => state.product);
+  const [selectionChange, setSelectionChange] = useState([]);
 
   useEffect(() => {
     getProducts(dispatch);
   }, [dispatch]);
 
+  const handleSelectionChange = (e) => {
+    setSelectionChange(e);
+  };
+
   const handleDelete = (id) => {
-    deleteProduct(dispatch, id);
+    deleteProduct(dispatch, id)
+      .then(() => {
+        toast.success("Item is deleted!");
+      })
+      .catch((err) => {
+        toast.success("Something is wrong, please again!");
+      });
+  };
+
+  const handleDeleteAllSelection = () => {
+    selectionChange.forEach((item) => {
+      deleteProduct(dispatch, item)
+        .then(() => {
+          toast.success("Item is deleted!");
+          setSelectionChange([]);
+        })
+        .catch((err) => {
+          toast.success("Something is wrong, please again!");
+        });
+    });
   };
 
   const columns = [
@@ -61,14 +86,37 @@ const ProductList = () => {
 
   return (
     <div className="productList">
-      <DataGrid
-        rows={products}
-        disableSelectionOnClick
-        columns={columns}
-        getRowId={(row) => row._id}
-        pageSize={8}
-        checkboxSelection
-      />
+      <ToastContainer />
+      {isFetching ? (
+        <div className="loading" style={{ height: "100%" }}>
+          Loading...
+        </div>
+      ) : error ? (
+        <div className="error" style={{ height: "100%" }}>
+          Something is wrong
+        </div>
+      ) : (
+        <>
+          {selectionChange.length > 0 && (
+            <button
+              onClick={handleDeleteAllSelection}
+              className="productListDeleteSelection"
+            >
+              Delete
+            </button>
+          )}
+          <DataGrid
+            rows={products}
+            disableSelectionOnClick
+            columns={columns}
+            getRowId={(row) => row._id}
+            pageSize={8}
+            rowsPerPageOptions={[8]}
+            onSelectionModelChange={(e) => handleSelectionChange(e)}
+            checkboxSelection
+          />
+        </>
+      )}
     </div>
   );
 };

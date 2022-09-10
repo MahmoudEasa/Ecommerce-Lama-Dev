@@ -29,34 +29,13 @@ const App = () => {
             </>
           ) : (
             <>
-              <Route
-                path="/"
-                element={admin ? <Home /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/users"
-                element={admin ? <UserList /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/user/:userId"
-                element={admin ? <User /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/newUser"
-                element={admin ? <NewUser /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/products"
-                element={admin ? <ProductList /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/product/:productId"
-                element={admin ? <Product /> : <Navigate to="/login" />}
-              />
-              <Route
-                path="/newproduct"
-                element={admin ? <NewProduct /> : <Navigate to="/login" />}
-              />
+              <Route path="/" element={<Home />} />
+              <Route path="/users" element={<UserList />} />
+              <Route path="/user/:userId" element={<User />} />
+              <Route path="/newUser" element={<NewUser />} />
+              <Route path="/products" element={<ProductList />} />
+              <Route path="/product/:productId" element={<Product />} />
+              <Route path="/newproduct" element={<NewProduct />} />
               <Route path="*" element={<Navigate to="/" />} />
             </>
           )}

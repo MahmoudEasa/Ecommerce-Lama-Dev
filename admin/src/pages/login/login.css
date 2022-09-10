@@ -2,16 +2,26 @@
   width: 100vw;
   height: calc(100vh - 50px);
   display: flex;
-  flex-direction: column;
-  gap: 15px;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
 }
 
 .loginContainer input {
-  width: 25%;
+  width: 230px;
   height: 40px;
   padding: 10px;
+}
+
+.loginContainer label {
+  font-size: 15px;
+  color: red;
 }
 
 .loginContainer button {

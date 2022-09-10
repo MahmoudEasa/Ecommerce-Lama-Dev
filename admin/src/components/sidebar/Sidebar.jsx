@@ -58,10 +58,22 @@ const Sidebar = () => {
                 Users
               </li>
             </Link>
+            <Link to="/newuser" className="link">
+              <li className="sidebarListItem">
+                <PermIdentity className="sidebarIcon" />
+                New User
+              </li>
+            </Link>
             <Link to="/products" className="link">
               <li className="sidebarListItem">
                 <Storefront className="sidebarIcon" />
                 Products
+              </li>
+            </Link>
+            <Link to="/newproduct" className="link">
+              <li className="sidebarListItem">
+                <Storefront className="sidebarIcon" />
+                New Product
               </li>
             </Link>
             <li className="sidebarListItem">

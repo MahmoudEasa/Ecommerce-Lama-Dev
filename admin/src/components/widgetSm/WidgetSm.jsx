@@ -5,14 +5,14 @@ import { useEffect } from "react";
 import { userRequest } from "./../../requestMethods";
 
 const WidgetSm = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState("Loading...");
 
   useEffect(() => {
     userRequest
       .get("users/?new=true")
       .then((res) => setUsers(res.data))
       .catch((err) => {
-        console.log(err);
+        setUsers("Something is wrong");
       });
   }, []);
 
@@ -20,7 +20,7 @@ const WidgetSm = () => {
     <div className="widgetSm">
       <span className="widgetSmTitle">New Join Members</span>
       <ul className="widgetSmList">
-        {users.length > 0 ? (
+        {typeof users === "object" && users.length > 0 ? (
           users.map((user) => (
             <li key={user._id} className="widgetSmListItem">
               <img
@@ -41,7 +41,12 @@ const WidgetSm = () => {
             </li>
           ))
         ) : (
-          <div className="loading">Loading....</div>
+          <div
+            className={users === "Loading..." ? "loading" : "error"}
+            style={{ padding: "100px 0" }}
+          >
+            {users}
+          </div>
         )}
       </ul>
     </div>

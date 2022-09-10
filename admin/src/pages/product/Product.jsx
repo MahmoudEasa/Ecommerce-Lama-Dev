@@ -21,7 +21,10 @@ const Product = () => {
   const product = useSelector((state) =>
     state.product.products.find((product) => product._id === productId)
   );
-  const img = useSelector((state) => state.product.img);
+
+  const { img, isImgLoading, isImgError } = useSelector(
+    (state) => state.product
+  );
 
   const [pStats, setPStats] = useState([]);
   const [inputs, setInputs] = useState({
@@ -75,8 +78,10 @@ const Product = () => {
     e.preventDefault();
 
     const data = { ...inputs, img };
-    updateProduct(dispatch, productId, data).then(() => navigate("/products"));
-    removeImgProduct(dispatch);
+    updateProduct(dispatch, productId, data).then(() => {
+      navigate("/products");
+      removeImgProduct(dispatch);
+    });
   };
 
   const handleChangeFile = (e) => {
@@ -159,7 +164,19 @@ const Product = () => {
           </div>
           <div className="productFormRight">
             <div className="productUpload">
-              <img src={img} alt="" className="productUploadImg" />
+              {isImgLoading ? (
+                <div className="loading" style={{ padding: "100px 0" }}>
+                  Loading...
+                </div>
+              ) : isImgError ? (
+                <div className="error" style={{ padding: "100px 0" }}>
+                  Something is wrong
+                </div>
+              ) : (
+                <label htmlFor="file">
+                  <img className="productUploadImg" src={img} alt="" />
+                </label>
+              )}
               <label htmlFor="file">
                 <Publish />
               </label>

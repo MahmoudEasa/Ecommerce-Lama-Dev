@@ -1,13 +1,15 @@
 import "./home.css";
-import { useState, useEffect, useMemo } from "react";
+import { useEffect, useMemo } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Chart from "../../components/chart/Chart";
 import FeaturedInfo from "../../components/featuredInfo/FeaturedInfo";
 import WidgetSm from "../../components/widgetSm/WidgetSm";
 import WidgetLg from "../../components/widgetLg/WidgetLg";
-import { userRequest } from "../../requestMethods";
+import { getStats } from "./../../redux/homeApiCalls";
 
 const Home = () => {
-  const [userStats, setUserStats] = useState([]);
+  const dispatch = useDispatch();
+  const userStats = useSelector((state) => state.home.userStats);
 
   const MONTHS = useMemo(
     () => [
@@ -28,19 +30,8 @@ const Home = () => {
   );
 
   useEffect(() => {
-    userRequest
-      .get("/users/stats")
-      .then((res) => {
-        res.data.map((item) => {
-          setUserStats((prev) => [
-            ...prev,
-            { name: MONTHS[item._id - 1], "Active User": item.total },
-          ]);
-          return 0;
-        });
-      })
-      .catch((err) => console.log(err));
-  }, [MONTHS]);
+    getStats(dispatch, MONTHS);
+  }, [MONTHS, dispatch]);
 
   return (
     <div className="home">

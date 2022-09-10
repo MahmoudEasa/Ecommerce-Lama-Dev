@@ -7,3 +7,25 @@
   text-decoration: none;
   color: inherit;
 }
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 25px;
+  margin: 0 !important;
+  font-size: 30px;
+  color: burlywood;
+  font-weight: bold;
+}
+
+.error {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 25px;
+  margin: 0 !important;
+  font-size: 30px;
+  color: red;
+  font-weight: 500;
+}

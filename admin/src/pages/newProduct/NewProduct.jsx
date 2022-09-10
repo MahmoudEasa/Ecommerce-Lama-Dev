@@ -1,95 +1,155 @@
 import "./newProduct.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
 import { firebaseImg } from "../../firebase";
 import { addProduct, removeImgProduct } from "../../redux/apiCalls";
 
 const NewProduct = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const img = useSelector((state) => state.product.img);
-  const [inputs, setInputs] = useState({
-    title: "",
-    desc: "",
-    price: 0,
-    inStock: "true",
-  });
+
+  const { img, isImgLoading, isImgError } = useSelector(
+    (state) => state.product
+  );
 
   const [cat, setCat] = useState([]);
-
-  const handleChange = (e) => {
-    setInputs({ ...inputs, [e.target.name]: e.target.value });
-  };
 
   const handleCat = (e) => {
     setCat(e.target.value.split(","));
   };
 
-  const handleCreate = (e) => {
-    e.preventDefault();
-    const products = { ...inputs, img, categories: cat };
-    addProduct(dispatch, products).then(() => navigate("/products"));
-    removeImgProduct(dispatch);
+  const handleCreate = (data) => {
+    const products = {
+      ...data,
+      img:
+        img ||
+        "https://www.4me.com/wp-content/uploads/2018/01/4me-icon-product.png",
+      categories: cat,
+    };
+    addProduct(dispatch, products).then(() => {
+      navigate("/products");
+      removeImgProduct(dispatch);
+    });
   };
+
+  useEffect(() => {
+    removeImgProduct(dispatch);
+  }, [dispatch]);
 
   return (
     <div className="newProduct">
       <h1 className="addProductTitle">New Product</h1>
-      <form className="addProductForm">
+      <form onSubmit={handleSubmit(handleCreate)} className="addProductForm">
         <div className="addProductItem">
           <label>Image</label>
           <input
             type="file"
             id="file"
+            name="file"
             onChange={(e) => {
               firebaseImg(e.target.files[0], dispatch);
             }}
           />
+          {isImgLoading ? (
+            <div className="loading" style={{ padding: "100px 0" }}>
+              Loading...
+            </div>
+          ) : isImgError ? (
+            <div className="error" style={{ padding: "100px 0" }}>
+              Something is wrong
+            </div>
+          ) : (
+            <label htmlFor="file">
+              <img
+                style={{ width: "100%" }}
+                src={
+                  img ||
+                  "https://www.4me.com/wp-content/uploads/2018/01/4me-icon-product.png"
+                }
+                alt=""
+              />
+            </label>
+          )}
         </div>
         <div className="addProductItem">
-          <label>Title</label>
+          <label htmlFor="title">Title</label>
           <input
+            id="title"
             type="text"
             placeholder="title..."
-            onChange={handleChange}
             name="title"
+            {...register("title", {
+              required: {
+                value: true,
+                message: "Title is required",
+              },
+            })}
           />
+          <label>{errors.title && errors.title.message}</label>
         </div>
         <div className="addProductItem">
-          <label>Price</label>
+          <label htmlFor="price">Price</label>
           <input
+            id="price"
             type="number"
             placeholder="100"
-            onChange={handleChange}
             name="price"
+            {...register("price", {
+              required: {
+                value: true,
+                message: "Price is required",
+              },
+            })}
           />
+          <label>{errors.price && errors.price.message}</label>
         </div>
         <div className="addProductItem">
           <label>Categories</label>
-          <input type="text" placeholder="jeans,skirts" onChange={handleCat} />
+          <input
+            type="text"
+            name="categories"
+            placeholder="jeans,skirts"
+            onChange={handleCat}
+            {...register("categories", {
+              required: {
+                value: true,
+                message: "Categories is required",
+              },
+            })}
+          />
+          <label>{errors.categories && errors.categories.message}</label>
         </div>
         <div className="addProductItem">
           <label>Description</label>
           <input
             type="text"
             placeholder="description..."
-            onChange={handleChange}
             name="desc"
+            {...register("desc", {
+              required: {
+                value: true,
+                message: "Description is required",
+              },
+            })}
           />
+          <label>{errors.desc && errors.desc.message}</label>
         </div>
         <div className="addProductItem">
           <label>Stock</label>
-          <select
-            defaultValue={inputs.inStock}
-            onChange={handleChange}
-            name="inStock"
-          >
+          <select {...register("inStock")} defaultValue="true" name="inStock">
             <option value="true">Yes</option>
             <option value="false">No</option>
           </select>
         </div>
-        <button onClick={handleCreate} className="addProductButton">
+        <button type="submit" className="addProductButton">
           Create
         </button>
       </form>

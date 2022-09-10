@@ -36,8 +36,6 @@ const NewUser = () => {
             <label htmlFor="male">Male</label>
             <input type="radio" name="gender" id="female" value="female" />
             <label htmlFor="female">Female</label>
-            <input type="radio" name="gender" id="other" value="other" />
-            <label htmlFor="other">Other</label>
           </div>
         </div>
         <div className="newUserItem">

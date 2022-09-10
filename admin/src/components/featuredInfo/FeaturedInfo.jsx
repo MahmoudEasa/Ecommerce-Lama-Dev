@@ -4,7 +4,7 @@ import { ArrowDownward, ArrowUpward } from "@material-ui/icons";
 import { userRequest } from "../../requestMethods";
 
 const FeaturedInfo = () => {
-  const [income, setIncome] = useState([]);
+  const [income, setIncome] = useState("Loading...");
   const [perc, setPerc] = useState(0);
 
   useEffect(() => {
@@ -17,26 +17,32 @@ const FeaturedInfo = () => {
         setIncome(list);
         setPerc((list[1].total * 100) / list[0].total - 100);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => setIncome("Something is wrong"));
   }, []);
 
   return (
     <div className="featured">
       <div className="featuredItem">
-        <span className="featuredTitle">Revanue</span>
-        <div className="featuredMoneyContainer">
-          <span className="featuredMoney">
-            ${income.length > 0 && income[1].total}
-          </span>
-          <span className="featuredMoneyRate">
-            % {Math.floor(perc)}{" "}
-            {perc < 0 ? (
-              <ArrowDownward className="featuredIcon negative" />
-            ) : (
-              <ArrowUpward className="featuredIcon" />
-            )}
-          </span>
-        </div>
+        <span className="featuredTitle">Revenue</span>
+        {typeof income === "object" ? (
+          <div className="featuredMoneyContainer">
+            <span className="featuredMoney">
+              ${income.length > 0 && income[1].total}
+            </span>
+            <span className="featuredMoneyRate">
+              % {Math.floor(perc)}{" "}
+              {perc < 0 ? (
+                <ArrowDownward className="featuredIcon negative" />
+              ) : (
+                <ArrowUpward className="featuredIcon" />
+              )}
+            </span>
+          </div>
+        ) : (
+          <div className={income === "Loading..." ? "loading" : "error"}>
+            {income}
+          </div>
+        )}
         <span className="featuredSub">Compared to last month</span>
       </div>
       <div className="featuredItem">
