@@ -1,16 +1,22 @@
-import { updateImgProduct } from "./redux/apiCalls";
+import { updateImgProduct } from "./redux/apiCalls/productApiCalls";
+import { updateImgUser } from "./redux/apiCalls/userApiCalls";
+import { initializeApp } from "firebase/app";
 import {
   getStorage,
   ref,
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { initializeApp } from "firebase/app";
 import {
   updateImgFailure,
   updateImgStart,
   updateImgSuccess,
 } from "./redux/productRedux";
+import {
+  updateUserImgStart,
+  updateUserImgSuccess,
+  updateUserImgFailure,
+} from "./redux/userRedux";
 
 // Import the functions you need from the SDKs you need
 // TODO: Add SDKs for Firebase products that you want to use
@@ -29,7 +35,7 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-export const firebaseImg = (file, dispatch) => {
+export const firebaseImg = (file, dispatch, type) => {
   if (file) {
     const fileName = new Date().getTime() + file.name;
     const storage = getStorage(app);
@@ -48,7 +54,8 @@ export const firebaseImg = (file, dispatch) => {
         // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        progress === 0 && dispatch(updateImgStart());
+        progress === 0 && type === "product" && dispatch(updateImgStart());
+        progress === 0 && type === "user" && dispatch(updateUserImgStart());
         console.log("Upload is " + progress + "% done");
         switch (snapshot.state) {
           case "paused":
@@ -69,11 +76,20 @@ export const firebaseImg = (file, dispatch) => {
 
         getDownloadURL(uploadTask.snapshot.ref)
           .then((downloadURL) => {
-            updateImgProduct(dispatch, downloadURL);
-            dispatch(updateImgSuccess());
+            if (type === "product") {
+              updateImgProduct(dispatch, downloadURL);
+              dispatch(updateImgSuccess());
+            } else {
+              updateImgUser(dispatch, downloadURL);
+              dispatch(updateUserImgSuccess());
+            }
           })
           .catch((err) => {
-            dispatch(updateImgFailure());
+            if (type === "product") {
+              dispatch(updateImgFailure());
+            } else {
+              dispatch(updateUserImgFailure());
+            }
           });
       }
     );

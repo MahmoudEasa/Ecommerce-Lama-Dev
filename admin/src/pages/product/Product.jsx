@@ -1,18 +1,26 @@
+import "./product.css";
 import { useState, useMemo, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Publish } from "@material-ui/icons";
-import "./product.css";
+import { useForm } from "react-hook-form";
+import { ToastContainer, toast } from "react-toastify";
 import Chart from "../../components/chart/Chart";
 import { userRequest } from "../../requestMethods";
 import { firebaseImg } from "../../firebase";
+import Loading from "../../components/loading/Loading";
 import {
-  removeImgProduct,
   updateImgProduct,
   updateProduct,
-} from "../../redux/apiCalls";
+} from "../../redux/apiCalls/productApiCalls";
 
 const Product = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ mode: "onTouched" });
+
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation().pathname.split("/")[2];
@@ -22,17 +30,11 @@ const Product = () => {
     state.product.products.find((product) => product._id === productId)
   );
 
-  const { img, isImgLoading, isImgError } = useSelector(
+  const { img, isImgLoading, isImgError, isFetching, error } = useSelector(
     (state) => state.product
   );
 
   const [pStats, setPStats] = useState([]);
-  const [inputs, setInputs] = useState({
-    title: product.title,
-    desc: product.desc,
-    price: product.price,
-    inStock: product.inStock,
-  });
 
   const MONTHS = useMemo(
     () => [
@@ -70,30 +72,24 @@ const Product = () => {
       .catch((err) => console.log(err));
   }, [MONTHS, productId]);
 
-  const handleChange = (e) => {
-    setInputs({ ...inputs, [e.target.name]: e.target.value });
-  };
-
-  const handleUpdate = (e) => {
-    e.preventDefault();
-
-    const data = { ...inputs, img };
-    updateProduct(dispatch, productId, data).then(() => {
-      navigate("/products");
-      removeImgProduct(dispatch);
-    });
+  const handleUpdate = (data) => {
+    const product = { ...data, img };
+    updateProduct(dispatch, productId, product, navigate);
   };
 
   const handleChangeFile = (e) => {
-    firebaseImg(e.target.files[0], dispatch);
+    firebaseImg(e.target.files[0], dispatch, "product");
   };
 
   useEffect(() => {
     updateImgProduct(dispatch, product.img);
   }, [dispatch, product.img]);
 
+  error && toast.error("Something is wrong");
   return (
     <div className="product">
+      <ToastContainer />
+      {isFetching && <Loading />}
       <div className="productTitleContainer">
         <h1 className="productTitle">Product</h1>
         <Link to="/newproduct">
@@ -128,39 +124,72 @@ const Product = () => {
         </div>
       </div>
       <div className="productBottom">
-        <form className="productForm">
+        <form onSubmit={handleSubmit(handleUpdate)} className="productForm">
           <div className="productFormLeft">
-            <label>Product Name</label>
-            <input
-              name="title"
-              onChange={handleChange}
-              type="text"
-              placeholder={product.title}
-            />
-            <label>Product Description</label>
-            <textarea
-              name="desc"
-              onChange={handleChange}
-              type="text"
-              placeholder={product.desc}
-            />
-            <label>Price</label>
-            <input
-              name="price"
-              onChange={handleChange}
-              type="text"
-              placeholder={product.price}
-            />
-            <label>In Stock</label>
-            <select
-              name="inStock"
-              onChange={handleChange}
-              defaultValue={product.inStock}
-              id="idStock"
-            >
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
+            <div className="inputContainer">
+              <label htmlFor="title">Product Name</label>
+              <input
+                name="title"
+                id="title"
+                type="text"
+                {...register("title", {
+                  required: {
+                    value: true,
+                    message: "Title is required",
+                  },
+                  value: product.title,
+                })}
+              />
+              <label>{errors.title && errors.title.message}</label>
+            </div>
+            <div className="inputContainer">
+              <label htmlFor="desc">Product Description</label>
+              <textarea
+                name="desc"
+                id="desc"
+                type="text"
+                {...register("desc", {
+                  required: {
+                    value: true,
+                    message: "Description is required",
+                  },
+                  value: product.desc,
+                })}
+              />
+              <label>{errors.desc && errors.desc.message}</label>
+            </div>
+            <div className="inputContainer">
+              <label htmlFor="price">Price</label>
+              <input
+                name="price"
+                id="price"
+                type="text"
+                {...register("price", {
+                  required: {
+                    value: true,
+                    message: "Price is required",
+                  },
+                  value: product.price,
+                  pattern: {
+                    value: /^[0-9+-]+$/,
+                    message: "This is not a valid number!",
+                  },
+                })}
+              />
+              <label>{errors.price && errors.price.message}</label>
+            </div>
+            <div className="inputContainer">
+              <label>In Stock</label>
+              <select
+                name="inStock"
+                id="inStock"
+                {...register("inStock", { value: product.inStock })}
+              >
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+              <label>{errors.inStock && errors.inStock.message}</label>
+            </div>
           </div>
           <div className="productFormRight">
             <div className="productUpload">
@@ -187,7 +216,7 @@ const Product = () => {
                 style={{ display: "none" }}
               />
             </div>
-            <button onClick={handleUpdate} className="productButton">
+            <button type="submit" className="productButton">
               Update
             </button>
           </div>

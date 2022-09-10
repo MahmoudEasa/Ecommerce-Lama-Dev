@@ -83,14 +83,20 @@
 .productFormLeft {
   display: flex;
   flex-direction: column;
+  gap: 15px;
 }
 
-.productFormLeft > label {
+.inputContainer > label {
   margin-bottom: 10px;
   color: gray;
 }
 
-.productFormLeft > input {
+.inputContainer > label:last-of-type {
+  color: red;
+  font-weight: 500;
+}
+
+.inputContainer > input {
   margin-bottom: 10px;
   border: none;
   padding: 5px;
@@ -98,7 +104,7 @@
   outline: none;
 }
 
-.productFormLeft > textarea {
+.inputContainer > textarea {
   width: 100%;
   height: 100px;
   margin-bottom: 10px;
@@ -108,7 +114,7 @@
   outline: none;
 }
 
-.productFormLeft >select{
+.inputContainer >select{
   margin-bottom: 10px;
   outline: none;
 }

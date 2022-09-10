@@ -113,11 +113,17 @@
     font-size: 14px;
 }
 
+.userUpdateItem > label:last-of-type {
+  color: red;
+  font-weight: 500;
+}
+
 .userUpdateInput{
     border: none;
     width: 250px;
     height: 30px;
     border-bottom: 1px solid gray;
+    outline: none;
 }
 
 .userUpdateRight{
@@ -141,6 +147,34 @@
 
 .userUpdateIcon{
     cursor: pointer;
+}
+
+.status {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.approved{
+  background-color: #e5faf2;
+  color: #3bb077;
+}
+
+.declined{
+  background-color: #fff0f1;
+  color: #d95087;
+}
+
+.pending{
+  background-color: #ebf1fe;
+  color: #2a7ade;
+}
+
+.status select {  
+  padding: 5px 7px;
+  border: none;
+  border-radius: 10px;
+  outline: none;
 }
 
 .userUpdateButton{

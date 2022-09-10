@@ -4,19 +4,24 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { firebaseImg } from "../../firebase";
-import { addProduct, removeImgProduct } from "../../redux/apiCalls";
+import { ToastContainer, toast } from "react-toastify";
+import Loading from "../../components/loading/Loading";
+import {
+  addProduct,
+  removeImgProduct,
+} from "../../redux/apiCalls/productApiCalls";
 
 const NewProduct = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm();
+  } = useForm({ mode: "onTouched" });
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const { img, isImgLoading, isImgError } = useSelector(
+  const { img, isImgLoading, isImgError, isFetching, error } = useSelector(
     (state) => state.product
   );
 
@@ -34,18 +39,18 @@ const NewProduct = () => {
         "https://www.4me.com/wp-content/uploads/2018/01/4me-icon-product.png",
       categories: cat,
     };
-    addProduct(dispatch, products).then(() => {
-      navigate("/products");
-      removeImgProduct(dispatch);
-    });
+    addProduct(dispatch, products, navigate);
   };
 
   useEffect(() => {
     removeImgProduct(dispatch);
   }, [dispatch]);
 
+  error && toast.error("Something is wrong");
   return (
     <div className="newProduct">
+      <ToastContainer />
+      {isFetching && <Loading />}
       <h1 className="addProductTitle">New Product</h1>
       <form onSubmit={handleSubmit(handleCreate)} className="addProductForm">
         <div className="addProductItem">
@@ -55,7 +60,7 @@ const NewProduct = () => {
             id="file"
             name="file"
             onChange={(e) => {
-              firebaseImg(e.target.files[0], dispatch);
+              firebaseImg(e.target.files[0], dispatch, "product");
             }}
           />
           {isImgLoading ? (
@@ -112,8 +117,9 @@ const NewProduct = () => {
           <label>{errors.price && errors.price.message}</label>
         </div>
         <div className="addProductItem">
-          <label>Categories</label>
+          <label htmlFor="categories">Categories</label>
           <input
+            id="categories"
             type="text"
             name="categories"
             placeholder="jeans,skirts"
@@ -128,8 +134,9 @@ const NewProduct = () => {
           <label>{errors.categories && errors.categories.message}</label>
         </div>
         <div className="addProductItem">
-          <label>Description</label>
+          <label htmlFor="desc">Description</label>
           <input
+            id="desc"
             type="text"
             placeholder="description..."
             name="desc"

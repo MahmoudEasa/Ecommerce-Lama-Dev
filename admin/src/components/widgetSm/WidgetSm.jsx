@@ -1,10 +1,11 @@
 import "./widgetSm.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Visibility } from "@material-ui/icons";
-import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { userRequest } from "./../../requestMethods";
 
 const WidgetSm = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState("Loading...");
 
   useEffect(() => {
@@ -34,7 +35,10 @@ const WidgetSm = () => {
               <div className="widgetSmUser">
                 <span className="widgetSmUsername">{user.username}</span>
               </div>
-              <button className="widgetSmButton">
+              <button
+                onClick={() => navigate(`/user/${user._id}`)}
+                className="widgetSmButton"
+              >
                 <Visibility className="widgetSmIcon" />
                 Display
               </button>

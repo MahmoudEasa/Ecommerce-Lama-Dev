@@ -1,5 +1,5 @@
-import { userRequest } from "../requestMethods";
-import { getStatsStart, getStatsSuccess, getStatsFailure } from "./homeRedux";
+import { userRequest } from "../../requestMethods";
+import { getStatsStart, getStatsSuccess, getStatsFailure } from "../homeRedux";
 
 export const getStats = async (dispatch, MONTHS) => {
   dispatch(getStatsStart());

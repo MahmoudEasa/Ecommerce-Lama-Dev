@@ -1,7 +1,7 @@
 import "./login.css";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "./../../redux/apiCalls";
+import { login } from "../../redux/apiCalls/userApiCalls";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -25,37 +25,39 @@ const Login = () => {
 
   return (
     <div className="loginContainer">
-      <div className="inputContainer">
-        <input
-          type="text"
-          required
-          placeholder="username"
-          disabled={isFetching}
-          onBlur={() =>
-            username === "" && setUsername({ error: "username is require" })
-          }
-          value={typeof username === "string" ? username : ""}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        <label>{typeof username === "object" && username.error}</label>
+      <div className="formContainer">
+        <div className="inputContainer">
+          <input
+            type="text"
+            required
+            placeholder="username"
+            disabled={isFetching}
+            onBlur={() =>
+              username === "" && setUsername({ error: "username is require" })
+            }
+            value={typeof username === "string" ? username : ""}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <label>{typeof username === "object" && username.error}</label>
+        </div>
+        <div className="inputContainer">
+          <input
+            type="password"
+            placeholder="password"
+            onBlur={() =>
+              password === "" && setPassword({ error: "password is require" })
+            }
+            value={typeof password === "string" ? password : ""}
+            disabled={isFetching}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <label>{typeof password === "object" && password.error}</label>
+        </div>
+        {error && <div style={{ color: "red" }}>Something is wrong</div>}
+        <button disabled={isFetching} onClick={handleLogin}>
+          Login
+        </button>
       </div>
-      <div className="inputContainer">
-        <input
-          type="password"
-          placeholder="password"
-          onBlur={() =>
-            password === "" && setPassword({ error: "password is require" })
-          }
-          value={typeof password === "string" ? password : ""}
-          disabled={isFetching}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <label>{typeof password === "object" && password.error}</label>
-      </div>
-      {error && <div style={{ color: "red" }}>Something is wrong</div>}
-      <button disabled={isFetching} onClick={handleLogin}>
-        Login
-      </button>
     </div>
   );
 };

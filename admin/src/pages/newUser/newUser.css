@@ -23,11 +23,17 @@
   color: rgb(151, 150, 150);
 }
 
+.newUserItem > label:last-of-type {
+  color: red;
+  font-weight: 500;
+}
+
 .newUserItem > input {
   height: 20px;
   padding: 10px;
   border: 1px solid gray;
   border-radius: 5px;
+  outline: none;
 }
 
 .newUserGender > input {
@@ -55,4 +61,27 @@
     border-radius: 10px;
     margin-top: 30px;
     cursor: pointer;
+}
+
+
+.approved{
+  background-color: #e5faf2;
+  color: #3bb077;
+}
+
+.declined{
+  background-color: #fff0f1;
+  color: #d95087;
+}
+
+.pending{
+  background-color: #ebf1fe;
+  color: #2a7ade;
+}
+
+.newUserItem select {  
+  padding: 5px 7px;
+  border: none;
+  border-radius: 10px;
+  outline: none;
 }

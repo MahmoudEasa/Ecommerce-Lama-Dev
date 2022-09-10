@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const CryptoJS = require("crypto-js");
 const {
   verifyTokenAndAuthorization,
   verifyTokenAndAdmin,
@@ -6,6 +7,7 @@ const {
 
 const router = require("express").Router();
 
+// UPDATE
 router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
   if (req.body.password) {
     req.body.password = CryptoJS.AES.encrypt(
@@ -32,7 +34,7 @@ router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
 // DELETE
 router.delete("/:id", verifyTokenAndAuthorization, async (req, res) => {
   try {
-    await User.findOneAndDelete(req.params.id);
+    await User.findByIdAndDelete(req.params.id);
     res.status(200).json("User has been deleted...");
   } catch (err) {
     res.status(500).json(err);
@@ -50,13 +52,22 @@ router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
   }
 });
 
-// GET ALL USER
+// GET ALL USERS
 router.get("/", verifyTokenAndAdmin, async (req, res) => {
   const query = req.query.new;
   try {
     const users = query
       ? await User.find().sort({ _id: -1 }).limit(5)
       : await User.find();
+
+    users.forEach(
+      (item) =>
+        (item.password = CryptoJS.AES.decrypt(
+          item.password,
+          process.env.PASS_SEC
+        ).toString(CryptoJS.enc.Utf8))
+    );
+
     res.status(200).json(users);
   } catch (err) {
     res.status(500).json(err);
